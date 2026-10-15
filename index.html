@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#151515">
+  <meta name="description" content="Your personal study, homework and semester planner.">
+  <title>StudyFlow — Student Planner</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="brand-icon">S</span> StudyFlow<span class="dot">.</span></div>
+
+      <p class="nav-label">WORKSPACE</p>
+      <nav id="navigation">
+        <button class="nav-item active" data-view="dashboard">◫ <span>Dashboard</span></button>
+        <button class="nav-item" data-view="homework">▤ <span>Homework</span></button>
+        <button class="nav-item" data-view="routine">◷ <span>Daily Routine</span></button>
+        <button class="nav-item" data-view="calendar">▦ <span>Calendar</span></button>
+        <button class="nav-item" data-view="semester">▣ <span>Semester Planner</span></button>
+        <button class="nav-item" data-view="assistant">✳ <span>Study Assistant</span></button>
+        <button class="nav-item" data-view="progress">↗ <span>Progress</span></button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="mini-card">
+          <span class="mini-icon">✦</span>
+          <strong>Small steps matter.</strong>
+          <p>Make today count.</p>
+        </div>
+        <button class="nav-item" data-view="settings">⚙ <span>Settings & Backup</span></button>
+        <p class="sidebar-foot">STUDYFLOW . LOCAL PLANNER</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">☰</button>
+        <div>
+          <div class="eyebrow">YOUR PERSONAL WORKSPACE</div>
+          <div class="topbar-title" id="pageTitle">Dashboard</div>
+        </div>
+        <div class="top-actions">
+          <span class="local-status"><span></span> Saved locally</span>
+          <button class="avatar" id="profileButton" title="Edit your name">S</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="view active" id="dashboard">
+          <div class="welcome">
+            <div>
+              <p class="eyebrow" id="todayDate"></p>
+              <h1>Let's make today <span>count.</span></h1>
+              <p class="muted">One task at a time. You've got this.</p>
+            </div>
+            <button class="primary-btn" id="quickAdd">＋ Add homework</button>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <div class="stat-top"><span>Pending tasks</span><span class="stat-icon">▤</span></div>
+              <div class="stat-value" id="pendingCount">0</div>
+              <div class="stat-note">Tasks still to finish</div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span>Completed</span><span class="stat-icon green">✓</span></div>
+              <div class="stat-value" id="completedCount">0</div>
+              <div class="stat-note">All-time completed tasks</div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span>Overdue</span><span class="stat-icon red">!</span></div>
+              <div class="stat-value" id="overdueCount">0</div>
+              <div class="stat-note">Past deadline, unfinished</div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span>Study time left</span><span class="stat-icon">◷</span></div>
+              <div class="stat-value" id="remainingHours">0h</div>
+              <div class="stat-note">Estimated unfinished work</div>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel">
+              <div class="panel-heading">
+                <div><h2>Today's focus</h2><p class="muted">Your unfinished assignments</p></div>
+                <button class="text-btn" data-go="homework">View all →</button>
+              </div>
+              <div id="todayTasks" class="task-list"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-heading"><div><h2>Your progress</h2><p class="muted">Based on your actual tasks</p></div></div>
+              <div class="progress-ring-wrap">
+                <div class="progress-ring" id="progressRing"><div><strong id="progressPercent">0%</strong><small>completed</small></div></div>
+              </div>
+              <div class="progress-details">
+                <div><span class="legend-dot orange"></span>Completed <strong id="progressDone">0</strong></div>
+                <div><span class="legend-dot grey"></span>Remaining <strong id="progressLeft">0</strong></div>
+              </div>
+              <button class="secondary-btn full-width" data-go="progress">View progress</button>
+            </article>
+          </div>
+
+          <article class="panel">
+            <div class="panel-heading"><div><h2>Upcoming deadlines</h2><p class="muted">Keep an eye on what's next</p></div></div>
+            <div id="upcomingTasks" class="task-list"></div>
+          </article>
+        </section>
+
+        <section class="view" id="homework">
+          <div class="section-intro"><div><h1>Homework</h1><p class="muted">Organize assignments and stay ahead of deadlines.</p></div><button class="primary-btn" id="addHomework">＋ New assignment</button></div>
+          <div class="filter-row">
+            <input id="taskSearch" type="search" placeholder="Search assignments...">
+            <select id="taskFilter"><option value="all">All tasks</option><option value="pending">Pending</option><option value="completed">Completed</option><option value="overdue">Overdue</option></select>
+          </div>
+          <div id="homeworkList" class="task-list panel"></div>
+        </section>
+
+        <section class="view" id="routine">
+          <div class="section-intro"><div><h1>Daily Routine</h1><p class="muted">Set your available time and build a practical study plan.</p></div></div>
+          <article class="panel">
+            <h2>Your daily availability</h2>
+            <form id="routineForm" class="form-grid">
+              <label>Wake-up time<input type="time" id="wakeTime" value="07:00" required></label>
+              <label>Sleep time<input type="time" id="sleepTime" value="23:00" required></label>
+              <label>College starts<input type="time" id="collegeStart" value="09:00" required></label>
+              <label>College ends<input type="time" id="collegeEnd" value="14:00" required></label>
+              <label>Study session (minutes)<input type="number" id="sessionLength" min="15" max="180" step="5" value="45" required></label>
+              <label>Break between sessions (minutes)<input type="number" id="breakLength" min="5" max="60" value="10" required></label>
+              <div class="form-actions"><button class="primary-btn" type="submit">Save routine</button><button class="secondary-btn" type="button" id="generateRoutine">Generate study plan</button></div>
+            </form>
+          </article>
+          <article class="panel"><div class="panel-heading"><div><h2>Your study plan</h2><p class="muted">Generated from your available time and unfinished tasks.</p></div></div><div id="routinePlan" class="task-list"></div></article>
+        </section>
+
+        <section class="view" id="calendar">
+          <div class="section-intro"><div><h1>Calendar</h1><p class="muted">Your deadlines and exam dates in one place.</p></div></div>
+          <article class="panel">
+            <div class="calendar-controls"><button class="secondary-btn" id="prevMonth">←</button><h2 id="monthTitle"></h2><button class="secondary-btn" id="nextMonth">→</button></div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+          </article>
+          <article class="panel"><h2 id="selectedDateTitle">Select a date</h2><div id="selectedDateTasks" class="task-list"></div></article>
+        </section>
+
+        <section class="view" id="semester">
+          <div class="section-intro"><div><h1>Semester Planner</h1><p class="muted">Track exams, chapters and revision.</p></div><button class="primary-btn" id="addExam">＋ Add exam</button></div>
+          <div id="examList" class="exam-grid"></div>
+          <article class="panel"><h2>Syllabus overview</h2><div id="syllabusOverview" class="task-list"></div></article>
+        </section>
+
+        <section class="view" id="assistant">
+          <div class="section-intro"><div><h1>Study Assistant</h1><p class="muted">Get help organizing your study workload.</p></div><span class="mode-badge">LOCAL PLANNER MODE</span></div>
+          <article class="panel chat-panel">
+            <div class="chat-header"><div class="assistant-avatar">✳</div><div><strong>StudyFlow Assistant</strong><p class="muted">Rule-based planning · No AI connection configured</p></div><button class="text-btn" id="clearChat">Clear chat</button></div>
+            <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+            <div class="suggestions">
+              <button class="suggestion" data-prompt="Plan my study schedule for today">Plan my day</button>
+              <button class="suggestion" data-prompt="What should I study first?">What should I study first?</button>
+              <button class="suggestion" data-prompt="Show my pending homework">Pending homework</button>
+            </div>
+            <form id="chatForm" class="chat-input"><input id="chatInput" placeholder="Ask about your study plan..." autocomplete="off" required><button class="primary-btn" type="submit">Send ↑</button></form>
+            <p class="privacy-note">This assistant uses local rules, not Gemini. No messages are sent to an AI provider. Connect a secure backend to enable real Gemini responses.</p>
+          </article>
+        </section>
+
+        <section class="view" id="progress">
+          <div class="section-intro"><div><h1>Progress</h1><p class="muted">Measure your consistency using your saved records.</p></div></div>
+          <div class="stats-grid">
+            <article class="stat-card"><div class="stat-top"><span>Total assignments</span></div><div class="stat-value" id="totalStat">0</div></article>
+            <article class="stat-card"><div class="stat-top"><span>Completion rate</span></div><div class="stat-value" id="rateStat">0%</div></article>
+            <article class="stat-card"><div class="stat-top"><span>Estimated hours left</span></div><div class="stat-value" id="hoursStat">0h</div></article>
+            <article class="stat-card"><div class="stat-top"><span>Exams planned</span></div><div class="stat-value" id="examsStat">0</div></article>
+          </div>
+          <article class="panel"><h2>Subject-wise workload</h2><div id="subjectProgress" class="task-list"></div></article>
+          <article class="panel"><h2>Daily completion</h2><p class="muted">Assignments completed today compared with all tasks.</p><div class="large-progress"><div id="dailyProgressBar"></div></div><p id="dailyProgressText" class="muted"></p></article>
+        </section>
+
+        <section class="view" id="settings">
+          <div class="section-intro"><div><h1>Settings & Backup</h1><p class="muted">Manage your preferences and keep your data safe.</p></div></div>
+          <article class="panel">
+            <h2>Personal preferences</h2>
+            <form id="settingsForm" class="form-grid">
+              <label>Your name<input id="studentName" maxlength="50" placeholder="Student"></label>
+              <label>Appearance<select id="themeSelect"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+              <div class="form-actions"><button class="primary-btn" type="submit">Save settings</button></div>
+            </form>
+          </article>
+          <article class="panel">
+            <h2>Data backup</h2><p class="muted">Export your tasks, routine, exams and settings to a JSON file.</p>
+            <div class="button-row"><button class="primary-btn" id="exportData">↓ Export backup</button><button class="secondary-btn" id="importButton">↑ Import backup</button><input type="file" id="importFile" accept=".json,application/json" hidden></div>
+          </article>
+          <article class="panel danger-panel">
+            <h2>Delete all planner data</h2><p class="muted">This permanently removes locally stored tasks, exams and routine settings.</p>
+            <button class="danger-btn" id="clearData">Delete all data</button>
+          </article>
+          <article class="panel"><h2>Privacy</h2><p class="muted">Your planner records stay in this browser unless you export them or choose to send information to an external service. Clearing browser data can erase your records. Keep backups when changing devices.</p></article>
+        </section>
+      </div>
+      <footer>Made for your next chapter. <span>StudyFlow © <span id="year"></span></span></footer>
+    </main>
+  </div>
+
+  <dialog id="taskDialog">
+    <form id="taskForm" class="dialog-form">
+      <div class="dialog-heading"><div><h2 id="taskDialogTitle">New assignment</h2><p class="muted">Add the details for your task.</p></div><button type="button" class="icon-btn" data-close="taskDialog">✕</button></div>
+      <input type="hidden" id="taskId">
+      <label>Assignment title<input id="taskTitle" maxlength="120" required placeholder="e.g. Accounting chapter 3"></label>
+      <div class="form-grid">
+        <label>Subject<input id="taskSubject" maxlength="60" required placeholder="e.g. Accounting"></label>
+        <label>Deadline<input type="date" id="taskDeadline" required></label>
+        <label>Estimated minutes<input type="number" id="taskMinutes" min="5" max="10000" value="60" required></label>
+        <label>Difficulty<select id="taskDifficulty"><option>Easy</option><option selected>Medium</option><option>Hard</option></select></label>
+        <label>Priority<select id="taskPriority"><option>Low</option><option selected>Medium</option><option>High</option></select></label>
+      </div>
+      <label>Description<textarea id="taskDescription" rows="3" maxlength="1000" placeholder="Optional details..."></textarea></label>
+      <div class="form-actions"><button type="button" class="secondary-btn" data-close="taskDialog">Cancel</button><button class="primary-btn" type="submit">Save assignment</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="examDialog">
+    <form id="examForm" class="dialog-form">
+      <div class="dialog-heading"><div><h2 id="examDialogTitle">Add exam</h2><p class="muted">Plan your examination preparation.</p></div><button type="button" class="icon-btn" data-close="examDialog">✕</button></div>
+      <input type="hidden" id="examId">
+      <label>Exam name<input id="examName" maxlength="100" required placeholder="e.g. First semester exam"></label>
+      <label>Subject<input id="examSubject" maxlength="60" required placeholder="e.g. Accounting"></label>
+      <label>Exam date<input type="date" id="examDate" required></label>
+      <label>Chapters / topics<textarea id="examChapters" rows="4" required placeholder="One chapter per line"></textarea></label>
+      <div class="form-actions"><button type="button" class="secondary-btn" data-close="examDialog">Cancel</button><button class="primary-btn" type="submit">Save exam</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="script.js"></script>
+</body>
+</html>
